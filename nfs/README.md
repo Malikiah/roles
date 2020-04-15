@@ -1,2 +1,3 @@
 VARIABLES
 - nfs_directories
+- nfs_ports
