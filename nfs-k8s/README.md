@@ -6,9 +6,7 @@ ansible_ssh_private_key_file = ${ssh_key}
 admin_email = ${admin_email}
 nfs_domain = ${nfs_domain}
 nfs_directories = ${nfs_directories}
-nfs_ports = ${nfs_ports}
-master_ports = ${master_ports}
-worker_ports = ${worker_ports}
+
 
 [nfs_nodes]
 ${nfs_nodes}

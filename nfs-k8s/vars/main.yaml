@@ -1,4 +1,3 @@
 ---
-nfs_directories:
-
 nfs_ports:
+  - 2049

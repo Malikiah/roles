@@ -9,8 +9,6 @@ ansible_ssh_private_key_file = ${ssh_key}
 admin_email = ${admin_email}
 
 
-
-
 [master_nodes]
 ${master_nodes}
 
