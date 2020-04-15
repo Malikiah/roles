@@ -6,7 +6,7 @@
 
 - name: Configuring Docker daemon file
   copy:
-    src: conf.d/daemon.json
+    src: files/daemon.json
     dest: /etc/docker/daemon.json
 
 - name: Creating docker service directory /etc/systemd/system/docker.service.d

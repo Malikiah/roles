@@ -1,0 +1,34 @@
+---
+- name: Adding user consul
+  user:
+    name: consul
+
+- name: Creating directory /usr/local/etc/consul
+  file:
+    path: /usr/local/etc/consul
+    state: directory
+
+- name: Creating Consul JSON file /usr/local/etc/consul/*.json
+  template:
+    src: templates/consul.json.j2
+    dest: /usr/local/etc/consul/{{ ansible_hostname }}.json
+  
+- name: Creating Consul service file /etc/systemd/system/consul.service
+  template: 
+    src: templates/consul.service.j2
+    dest: /etc/systemd/system/consul.service
+
+- name: Starting & enabling Consul
+  command: systemctl daemon-reload && systemctl start consul  && systemctl enable consul
+
+      
+  # - name: Check Admin temp password
+  #   become: yes
+  #   with_items: 
+  #     - "{{ hostvars['nodes'] }}"
+  #   command: /bin/ls /usr/local/etc/consul/
+  #   register: ls 
+  #   changed_when: False
+
+  # - name: Print SSH public key
+  #   debug: var=hostvars['nodes']

@@ -1,0 +1,89 @@
+- include: firewall.yaml
+- include: packages.yaml
+
+- name: Setting up npm
+  shell: npm install npm --global
+  args:
+    executable: /bin/bash
+
+- name: Starting & enabling Docker
+  shell: systemctl enable docker && sudo systemctl start docker
+  args:
+    executable: /bin/bash
+
+- name: Creating a symbolic link for python3
+  file:
+    src: /usr/bin/python3
+    dest: /bin/python 
+    state: link
+  
+
+- name: Creating a symbolic link for pip3
+  file:
+    src: /usr/bin/pip3
+    dest: /bin/pip
+    state: link
+  
+- name: Installing docker-compose with pip3
+  shell: pip install docker-compose
+  args:
+    executable: /bin/bash
+
+- name: Cloning AWX
+  git:
+    repo: 'https://github.com/ansible/awx.git'
+    dest: ~/awx
+    clone: yes
+    update: no
+
+- name: Copying over logo
+  copy:
+    src: ./assets/ansible.svg
+    dest: /root/awx/awx/ui/client/assets/logo-header.svg
+
+- name: Changing docker port to 8080
+  lineinfile:
+    path: awx/installer/inventory
+    regexp: '^host_port=80'
+    line: host_port=8080
+
+- name: Setting awx official to false
+  lineinfile:
+    path: awx/installer/inventory
+    regexp: '^# awx_official=false'
+    line: awx_official=false
+
+- name: Setting postgres password
+  lineinfile:
+    path: awx/installer/inventory
+    regexp: '^pg_password='
+    line: pg_password={{ pg_awx_password }}
+
+- name: Setting rabbitmq password
+  lineinfile:
+    path: awx/installer/inventory
+    regexp: '^rabbitmq_password='
+    line: rabbitmq_password={{ rabbitmq_password }}
+
+- name: Setting AWX admin username
+  lineinfile:
+    path: awx/installer/inventory
+    regexp: '^admin_user='
+    line: admin_user={{ awx_admin }}
+
+- name: Setting AWX admin password
+  lineinfile:
+    path: awx/installer/inventory
+    regexp: '^admin_password='
+    line: admin_password={{ awx_admin_password }}
+
+- name: Setting AWX Secret
+  lineinfile:
+    path: awx/installer/inventory
+    regexp: '^secret_key='
+    line: secret_key={{ awx_secret }}
+
+- name: Running AWX playbook
+  shell: ansible-playbook -i ./awx/installer/inventory awx/installer/install.yml -vvv
+  args:
+    executable: /bin/bash

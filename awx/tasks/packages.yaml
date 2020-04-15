@@ -1,0 +1,31 @@
+---
+
+- name: Adding docker repo
+  shell: dnf config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
+  args:
+    executable: /bin/bash
+    
+- name: Installing epel-release && utils
+  dnf:
+    name: 
+      - epel-release 
+      - dnf-utils 
+      - device-mapper-persistent-data 
+      - lvm2
+    update_cache: true
+    state: latest
+
+- name: Installing required packages
+  dnf:
+    name: 
+      - nodejs 
+      - wget 
+      - git 
+      - ansible
+    update_cache: true
+    state: latest
+
+- name: Installing Docker
+  shell: dnf install -y docker-ce docker-ce-cli containerd.io --nobest
+  args:
+    executable: /bin/bash

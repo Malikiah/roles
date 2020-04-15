@@ -1,5 +1,5 @@
+- include: firewall.yaml
 - include: packages.yaml
-# - include: firewall.yaml
 - include: docker.yaml
 
 

@@ -2,7 +2,7 @@ VARIABLES
 - nfs_directories
 - nfs_ports
 
-Example inventory.cfg :
+example inventory.cfg :
 ```
 [all:vars]
 ansible_user = root

@@ -1,0 +1,17 @@
+---
+- include: firewall.yaml
+- include: packages.yaml 
+
+- name: Starting & Enabling Jenkins
+  shell: systemctl start jenkins && sudo systemctl enable jenkins
+  args:
+    executable: /bin/bash
+
+- name: Check Admin temp password
+  become: yes
+  command: /bin/cat /var/lib/jenkins/secrets/initialAdminPassword
+  register: cat 
+  changed_when: False
+
+- name: Print SSH public key
+  debug: var=cat.stdout
