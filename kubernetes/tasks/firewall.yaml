@@ -1,0 +1,11 @@
+---
+# https://coreos.com/flannel/docs/latest/troubleshooting.html#firewalls
+
+- name: Opening ports in firewall for flannel
+  firewalld:
+    port: "{{ item }}/udp"
+    zone: public
+    permanent: yes
+    immediate: yes
+    state: enabled
+  loop: "{{ flannel_ports }}"

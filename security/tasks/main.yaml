@@ -1,0 +1,5 @@
+---
+- include: packages.yaml
+- include: firewall.yaml
+- include: sysctl.yaml
+- include: user.yaml

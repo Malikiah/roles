@@ -1,0 +1,12 @@
+---
+# https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/install-kubeadm/#check-required-ports
+
+- name: Opening ports in firewall
+  firewalld:
+    port: "{{ item }}/tcp"
+    zone: public
+    permanent: yes
+    immediate: yes
+    state: enabled
+  loop: "{{ master_ports }}"
+

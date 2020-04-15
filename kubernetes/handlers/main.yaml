@@ -1,0 +1,6 @@
+---
+- name: restart Docker
+  service: name=docker state=restarted
+
+- name: restart Kubelet
+  service: name=kubelet state=restarted

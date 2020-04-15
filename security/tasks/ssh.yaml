@@ -1,0 +1,31 @@
+---
+# Setting ssh configuration
+  - name: Setting ssh banner configuration
+    template:
+      src: ./templates/sshd-banner.j2
+      dest: /etc/ssh/sshd-banner
+  
+  - name: Adding ssh banner location to /etc/ssh/sshd_config
+    lineinfile:
+        path: /etc/ssh/sshd_config
+        line: 'Banner /etc/ssh/sshd-banner'
+
+  - name: Disbaling root login
+    lineinfile:
+        path: /etc/ssh/sshd_config
+        regexp: '^PermitRootLogin yes'
+        line: 'PermitRootLogin no'
+
+  - name: Restarting sshd
+    shell: systemctl restart sshd
+    args:
+      executable: /bin/bash
+
+- name: Ansible User
+  hosts: 127.0.0.1
+  tasks:
+  - name: Changing Ansible user to default
+    lineinfile:
+      path: inventory.cfg
+      regexp: '^ansible_user = root'
+      line: 'ansible_user = default'

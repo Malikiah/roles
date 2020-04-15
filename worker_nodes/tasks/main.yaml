@@ -1,0 +1,8 @@
+# - include: firewall.yaml
+
+- name: Joining workers nodes to the cluster
+  ignore_errors: yes
+  shell: "{{ hostvars[groups['master_nodes'][0]].join_command.stdout_lines[0] }} --ignore-preflight-errors=all"
+  args:
+    executable: /bin/bash
+    

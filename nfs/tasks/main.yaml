@@ -1,0 +1,28 @@
+- include: packages.yaml
+# - include: firewall.yaml
+- include: block_volume.yaml
+
+- name: Starting & Enabling NFS server
+  systemd:
+    name: nfs-server
+    state: started
+    enabled: yes
+
+- name: Configuring exports
+  lineinfile:
+    path: /etc/exports
+    line: "/data/nfs4 {{ hostvars[groups['worker_nodes'][index]]['ansible_host'] }}(rw,anonuid=1001)"
+  loop: "{{ groups['worker_nodes']|flatten(levels=1) }}"
+  loop_control:
+    index_var: index
+
+- name: Exporting NFS config
+  shell: exportfs -ra
+  args:
+    executable: /bin/bash
+
+# - name: Changing /data/nfs4 ownership to default
+#   file:
+#     path: /data/nfs4
+#     owner: default
+#     recurse: yes

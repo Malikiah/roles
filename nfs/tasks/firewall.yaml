@@ -1,0 +1,11 @@
+---
+
+- name: Opening ports in firewall
+  firewalld:
+    port: "{{ item }}/tcp"
+    zone: public
+    permanent: yes
+    immediate: yes
+    state: enabled
+  loop: "{{ nfs_ports }}"
+  

@@ -1,0 +1,30 @@
+---
+  - name: Fail2ban configuration file
+    template:
+      src: ./templates/jail.local.j2
+      dest: /etc/fail2ban/jail.local
+
+  - name: Starting & enabling fail2ban
+    shell: systemctl start fail2ban && systemctl enable fail2ban
+    args:
+      executable: /bin/bash
+
+  - name: Starting & enabling firewalld
+    shell: systemctl start firewalld && systemctl enable firewalld
+    args:
+      executable: /bin/bash
+
+  - name: Selinux configuration
+    shell: setenforce enforcing
+    args:
+      executable: /bin/bash
+
+  - name: Opening ports in firewall
+    firewalld:
+      port: "{{ item }}/tcp"
+      zone: public
+      permanent: yes
+      immediate: yes
+      state: enabled
+    loop:
+    - 22

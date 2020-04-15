@@ -1,0 +1,30 @@
+---
+- name: Adding Kubernetes repository
+  copy:
+    src: yum.repos.d/kubernetes.repo
+    dest: /etc/yum.repos.d/kubernetes.repo
+
+- name: Adding Docker repository
+  shell: dnf config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
+  args:
+    executable: /bin/bash
+    
+- name: Installing required packages
+  dnf:
+    name:
+    - nfs-utils
+    - kubectl
+    - kubeadm
+    - kubelet
+    - yum-utils
+    - device-mapper-persistent-data
+    - lvm2
+    - dnf-plugins-core
+    - ipvsadm
+    update_cache: true
+    state: latest
+
+- name: Installing Docker
+  shell: dnf install -y docker-ce docker-ce-cli containerd.io --nobest
+  args:
+    executable: /bin/bash

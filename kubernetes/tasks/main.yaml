@@ -1,0 +1,75 @@
+- include: packages.yaml
+# - include: firewall.yaml
+- include: docker.yaml
+
+
+- name: Starting & enabling Docker
+  systemd:
+    state: started
+    enabled: yes
+    daemon_reload: yes
+    name: docker
+  
+- name: Starting & enabling kubelet
+  systemd:
+    state: started
+    enabled: yes
+    daemon_reload: yes
+    name: kubelet
+
+# - name: Creating calico configuration for NetworkManager
+#   copy:
+#     dest: /etc/NetworkManager/conf.d/calico.conf
+#     content: "[keyfile]\nunmanaged-devices=interface-name:cali*;interface-name:tunl*"
+
+# - name: Restarting NetworkManager
+#   systemd:
+#     state: restarted
+#     enabled: yes
+#     daemon_reload: yes
+#     name: NetworkManager
+
+- name: Disabling Selinux
+  lineinfile:
+    path: /etc/sysconfig/selinux
+    regex: SELINUX=enforcing
+    line: SELINUX=disabled
+    state: present
+
+# - sysctl:
+#     name: net.ipv4.conf.all.rp_filter
+#     value: '1'
+#     sysctl_set: yes
+#     state: present
+#     reload: yes
+
+- name: Allowing iptables to see bridged traffic on ipv4
+  sysctl:
+    name: net.bridge.bridge-nf-call-iptables
+    value: '1'
+    sysctl_set: yes
+    state: present
+    reload: yes
+
+- name: Allowing iptables to see bridged traffic on ipv6
+  sysctl:
+    name: net.bridge.bridge-nf-call-ip6tables
+    value: '1'
+    sysctl_set: yes
+    state: present
+    reload: yes
+
+- name: Download cni-plugins
+  get_url:
+    url: https://github.com/containernetworking/plugins/releases/download/v0.7.1/cni-plugins-amd64-v0.7.1.tgz
+    dest: .
+
+- name: Extract cni-plugins-amd64-v0.7.1.tgz into /opt/cni/bin/
+  shell: tar -xvf cni-plugins-amd64-v0.7.1.tgz -C /opt/cni/bin/
+  args:
+    executable: /bin/bash
+
+- name: Clean artifact cni-plugins
+  file:
+    state: absent
+    path: cni-plugins-amd64-v0.7.1.tgz

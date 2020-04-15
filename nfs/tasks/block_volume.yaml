@@ -1,0 +1,20 @@
+---
+- name: Creating Mount Directories
+  file:
+    path: "/data/nfs4/{{ item }}"
+    state: directory
+  loop: "{{ nfs_directories }}"
+
+- name: Making filesystem for nfs-volume-sfo2-01
+  filesystem:
+    fstype: ext4 
+    dev: /dev/disk/by-id/scsi-0DO_Volume_nfs-volume-sfo2-01
+    force: no
+
+- name: Mounting nfs-volume-sfo2-01 to /data/nfs4
+  mount:
+    path: /data/nfs4
+    src: /dev/disk/by-id/scsi-0DO_Volume_nfs-volume-sfo2-01
+    fstype: ext4
+    opts: discard,defaults,noatime 
+    state: mounted

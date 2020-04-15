@@ -1,0 +1,21 @@
+---
+- name: Disabling Ctrl+Alt+Delete in Inittab
+  lineinfile:
+    path: /etc/inittab
+    regexp: '^ca::ctrlaltdel:/sbin/shutdown -t3 -r now'
+    line: '# ca::ctrlaltdel:/sbin/shutdown -t3 -r now'
+
+- name: Setting hard core to 0 in /etc/security/limits.conf
+  lineinfile:
+    path: /etc/security/limits.conf
+    line: 'hard core 0'
+
+- name: Setting suid_dumpable to 0 in /etc/sysctl.conf
+  lineinfile:
+    path: /etc/sysctl.conf
+    line: 'fs.suid_dumpable = 0'
+
+- name: Loading sysctl values from configuration file
+  shell: systemctl daemon-reload && sysctl -p
+  args:
+    executable: /bin/bash

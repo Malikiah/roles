@@ -1,0 +1,32 @@
+# - include: firewall.yaml
+
+- name: Initializing Kubernetes
+  shell: kubeadm init --pod-network-cidr=10.244.0.0/16 
+  args:
+    executable: /bin/bash
+  run_once: True
+  ignore_errors: yes
+  when: "groups['master_nodes'][0] is search(ansible_hostname)"
+
+- name: Generate join command
+  command: kubeadm token create --print-join-command
+  register: join_command
+  when: "groups['master_nodes'][0] is search(ansible_hostname)"
+
+- name: Creating kube_config
+  command: cat /etc/kubernetes/admin.conf
+  register: kube_config
+  when: "groups['master_nodes'][0] is search(ansible_hostname)"
+
+- name: Create .kube directory
+  file:
+    path: $HOME/.kube
+    state: directory
+  when: "groups['master_nodes'][0] is search(ansible_hostname)"
+
+- name:
+  shell: sudo cp -r /etc/kubernetes/admin.conf $HOME/.kube/config && chown -R {{ ansible_user }} $HOME/.kube/config
+  args:
+    executable: /bin/bash
+  when: "groups['master_nodes'][0] is search(ansible_hostname)"
+

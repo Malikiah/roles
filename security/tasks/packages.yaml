@@ -1,0 +1,22 @@
+---
+- name: Installing epel-release
+  dnf:
+    name: 
+    - epel-release
+    update_cache: true
+    state: latest
+    
+- name: Installing required pacakges
+  dnf:
+    name:
+    - git
+    - fail2ban
+    - vim
+    update_cache: true
+    state: latest
+
+# - name: Upgrade all packages
+#   dnf:
+#     name: "*"
+#     state: latest
+#     allow_downgrade: true
