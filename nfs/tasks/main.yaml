@@ -1,5 +1,5 @@
 - include: packages.yaml
-# - include: firewall.yaml
+- include: firewall.yaml
 - include: block_volume.yaml
 
 - name: Starting & Enabling NFS server
@@ -21,8 +21,8 @@
   args:
     executable: /bin/bash
 
-# - name: Changing /data/nfs4 ownership to default
-#   file:
-#     path: /data/nfs4
-#     owner: default
-#     recurse: yes
+- name: Changing /data/nfs4 ownership to default
+  file:
+    path: /data/nfs4
+    owner: default
+     recurse: yes
