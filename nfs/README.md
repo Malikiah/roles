@@ -8,7 +8,7 @@ Example inventory.cfg :
 ansible_user = root
 ansible_ssh_private_key_file = ~/.ssh/id_rsa
 admin_email = root@localhost
-nfs_domain = nfs.malikiah.io
+nfs_domain = nfs.example.io
 
 [master_nodes]
 sfo2-master-node-01 ansible_host=165.227.59.212
