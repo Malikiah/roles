@@ -1,1 +1,2 @@
-
+VARIABLES
+- admin_email
