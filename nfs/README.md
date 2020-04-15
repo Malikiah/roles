@@ -1,0 +1,2 @@
+VARIABLES
+- nfs_directories
