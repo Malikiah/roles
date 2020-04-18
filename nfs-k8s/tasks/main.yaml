@@ -25,4 +25,4 @@
   file:
     path: /data/nfs4
     owner: default
-     recurse: yes
+    recurse: yes

@@ -43,6 +43,11 @@
 #     state: present
 #     reload: yes
 
+- name: Add br_netfilter
+  modprobe:
+    name: br_netfilter
+    state: present
+
 - name: Allowing iptables to see bridged traffic on ipv4
   sysctl:
     name: net.bridge.bridge-nf-call-iptables
@@ -58,6 +63,12 @@
     sysctl_set: yes
     state: present
     reload: yes
+
+- name: Turn off Swap
+  lineinfile:
+    path: /etc/fstab
+    regexp: '^/dev/mapper/cl-swap'
+    line: '#/dev/mapper/cl-swap'
 
 - name: Download cni-plugins
   get_url:
