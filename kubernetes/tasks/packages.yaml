@@ -1,7 +1,14 @@
 ---
+- name: Removing libnfsidmap
+  dnf:
+    name: 
+    - libnfsidmap
+    state: absent
+    autoremove: yes
+
 - name: Adding Kubernetes repository
   copy:
-    src: yum.repos.d/kubernetes.repo
+    src: files/kubernetes.repo
     dest: /etc/yum.repos.d/kubernetes.repo
 
 - name: Adding Docker repository
@@ -21,6 +28,7 @@
     - lvm2
     - dnf-plugins-core
     - ipvsadm
+    - python3
     update_cache: true
     state: latest
 

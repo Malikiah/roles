@@ -1,12 +1,31 @@
 ---
 # https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/install-kubeadm/#check-required-ports
 
-- name: Opening ports in firewall
+- name: Include vars
+  include_vars:
+    file: vars/main.yaml 
+
+- name: Opening tcp ports in firewall
   firewalld:
     port: "{{ item }}/tcp"
     zone: public
     permanent: yes
     immediate: yes
     state: enabled
-  loop: "{{ master_ports }}"
+  loop: "{{ master_ports_tcp }}"
 
+- name: Opening udp ports in firewall
+  firewalld:
+    port: "{{ item }}/udp"
+    zone: public
+    permanent: yes
+    immediate: yes
+    state: enabled
+  loop: "{{ master_ports_udp }}"
+
+- name: Reloading service firewalld
+  systemd:
+    name: firewalld
+    state: restarted
+    daemon_reexec: yes
+    daemon_reload: yes

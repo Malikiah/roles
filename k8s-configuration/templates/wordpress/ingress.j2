@@ -1,0 +1,18 @@
+
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: wordpress-ingress
+spec:
+  tls:
+  - hosts:
+    - {{ wordpress_domain }}
+    secretName: nextcloud-secret
+  rules:
+  - host: {{ wordpress_domain }}
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: wordpress
+          servicePort: 8080

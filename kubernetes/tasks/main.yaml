@@ -1,7 +1,6 @@
-- include: firewall.yaml
+# - include: firewall.yaml
 - include: packages.yaml
 - include: docker.yaml
-
 
 - name: Starting & enabling Docker
   systemd:
@@ -17,31 +16,12 @@
     daemon_reload: yes
     name: kubelet
 
-# - name: Creating calico configuration for NetworkManager
-#   copy:
-#     dest: /etc/NetworkManager/conf.d/calico.conf
-#     content: "[keyfile]\nunmanaged-devices=interface-name:cali*;interface-name:tunl*"
-
-# - name: Restarting NetworkManager
-#   systemd:
-#     state: restarted
-#     enabled: yes
-#     daemon_reload: yes
-#     name: NetworkManager
-
 - name: Disabling Selinux
   lineinfile:
     path: /etc/sysconfig/selinux
     regex: SELINUX=enforcing
     line: SELINUX=disabled
     state: present
-
-# - sysctl:
-#     name: net.ipv4.conf.all.rp_filter
-#     value: '1'
-#     sysctl_set: yes
-#     state: present
-#     reload: yes
 
 - name: Add br_netfilter
   modprobe:
@@ -74,6 +54,11 @@
   get_url:
     url: https://github.com/containernetworking/plugins/releases/download/v0.7.1/cni-plugins-amd64-v0.7.1.tgz
     dest: .
+
+- name: mkdir /opt/cni/bin/
+  file:
+    path: /opt/cni/bin/
+    state: directory
 
 - name: Extract cni-plugins-amd64-v0.7.1.tgz into /opt/cni/bin/
   shell: tar -xvf cni-plugins-amd64-v0.7.1.tgz -C /opt/cni/bin/

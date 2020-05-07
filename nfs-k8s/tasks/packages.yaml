@@ -1,4 +1,10 @@
 ---
+- name: Removing libnfsidmap
+  dnf:
+    name: 
+    - libnfsidmap
+    state: absent
+    autoremove: yes
 
 - name: Installing required packages
   dnf:

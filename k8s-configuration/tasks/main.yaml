@@ -1,0 +1,134 @@
+---
+- include: firewall.yaml
+- include: packages.yaml
+
+- name: Setting kube config localhost configuration on user {{ ansible_user_id }}
+  copy:
+    dest: $HOME/.kube/config
+    content: "{{ hostvars[groups['master_nodes'][0]].kube_config.stdout }}"
+
+- name: Setting permanent environment variable for KUBECONFIG
+  lineinfile:
+    path: ~/.bash_profile
+    line: export KUBECONFIG=$HOME/.kube/config
+
+- name: Applying Flannel container network interface
+  shell: kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
+  args:
+    executable: /bin/bash
+
+- name: Curling Helm Git repo && Installing Helm
+  get_url:
+    url: https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3
+    dest: .
+
+- name: Installing helm 
+  shell: mv get-helm-3 get_helm.sh && source ./get_helm.sh
+
+- name: Removing helm install artifacts
+  file:
+    path: get_helm.sh
+    state: absent
+
+- name: Updating helm repository
+  shell: helm repo update
+  args:
+    executable: /bin/bash
+
+
+##### Nginx Controller Deployment #####
+
+- name: Creating nginx-ingress namespace
+  shell: kubectl create namespace nginx-ingress
+  ignore_errors: yes
+
+- name: Installing Nginx helm chart
+  shell: helm install nginx-ingress stable/nginx-ingress --namespace nginx-ingress
+  args:
+    executable: /bin/bash
+  ignore_errors: yes
+
+
+##### Cert Manager Deployment #####
+
+- name: Adding jetstack repo for helm
+  shell: helm repo add jetstack https://charts.jetstack.io
+  args:
+    executable: /bin/bash
+    
+- name: Updating helm repository
+  shell: helm repo update
+  args:
+    executable: /bin/bash
+
+- name: Creating cert manager namespace
+  shell: kubectl create namespace cert-manager
+  args:
+    executable: /bin/bash
+  ignore_errors: yes
+
+- name: Installing helm cert-manager
+  shell: helm install cert-manager jetstack/cert-manager --namespace cert-manager --set installCRDs=true
+  args:
+    executable: /bin/bash
+  ignore_errors: yes
+
+# - name: Installing Cert Manager
+#   shell: kubectl apply -f ansible/kubernetes_files/cert-manager/cert-manager.yaml
+#   args:
+#     executable: /bin/bash
+#   ignore_errors: yes
+
+# - name: Applying certification issuer
+#   shell: kubectl apply -f kubernetes_files/cert-manager/staging-issuer.yaml
+#   args:
+#     executable: /bin/bash
+ 
+
+##### NFS Deployment #####
+
+- name: Creating nfs namespace
+  shell: kubectl create namespace nfs
+  args:
+    executable: /bin/bash
+  ignore_errors: yes
+
+- name: Installing helm chart nfs-client-provisioner
+  shell: helm install nfs-client-provisioner stable/nfs-client-provisioner --namespace nfs --set nfs.server={{ nfs_domain }},nfs.path={{ nfs_path }},storageClass.defaultClass=true
+  args:
+    executable: /bin/bash
+  ignore_errors: yes
+
+
+##### Nextcloud Deployment #####
+
+- name: Creating file directory for nextcloud
+  file:
+    path: ./files/nextcloud/
+    state: directory
+
+- name: Creating yaml files for nextcloud
+  template:
+    src: templates/nextcloud/{{ item }}.j2
+    dest: ./files/nextcloud/{{ item }}.yaml
+  with_items:
+  - pvc
+  - ingress
+
+- name: Creating nextcloud namespace
+  shell: kubectl create namespace nextcloud
+  args:
+    executable: /bin/bash
+  ignore_errors: yes
+
+- name: Applying Nextcloud Persistent Volume Claim
+  shell: kubectl apply -f ./files/nextcloud/pvc.yaml --namespace nextcloud
+
+- name: Installing helm chart Nextcloud
+  shell: "helm install nextcloud stable/nextcloud --set image.tag=stable-fpm,nextcloud.host={{ nextcloud_domain }},nextcloud.username=malikiah,nextcloud.password=password,mariadb.enabled=true,mariadb.rootUser.password=$nextcloud_mariadb_root_password,mariadb.db.name=nextcloud,mariadb.db.user=nextcloud,mariadb.db.password=$nextcloud_mariadb_password,ingress.enabled=true,nginx.enabled=true,persistence.enabled=true,persistence.storageClass=nfs-client,persistence.existingClaim=nextcloud-pvc,ingress.servicePort=https"
+  args:
+    executable: /bin/bash
+  ignore_errors: yes
+
+
+##### Wordpress Deployment #####

@@ -20,12 +20,3 @@
     shell: systemctl restart sshd
     args:
       executable: /bin/bash
-
-- name: Ansible User
-  hosts: 127.0.0.1
-  tasks:
-  - name: Changing Ansible user to default
-    lineinfile:
-      path: inventory.cfg
-      regexp: '^ansible_user = root'
-      line: 'ansible_user = default'

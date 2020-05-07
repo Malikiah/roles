@@ -1,4 +1,4 @@
-# - include: firewall.yaml
+- include: firewall.yaml
 
 - name: Joining workers nodes to the cluster
   ignore_errors: yes

@@ -1,11 +1,59 @@
 ---
 # https://coreos.com/flannel/docs/latest/troubleshooting.html#firewalls
 
-- name: Opening ports in firewall for flannel
+- name: Include vars
+  include_vars:
+    file: vars/main.yaml 
+
+- name: Opening udp ports in firewall for flannel
   firewalld:
     port: "{{ item }}/udp"
     zone: public
     permanent: yes
     immediate: yes
     state: enabled
-  loop: "{{ flannel_ports }}"
+  loop: "{{ kubernetes_ports_udp }}"
+
+- name: Opening tcp ports in firewall for flannel
+  firewalld:
+    port: "{{ item }}/tcp"
+    zone: public
+    permanent: yes
+    immediate: yes
+    state: enabled
+  loop: "{{ kubernetes_ports_tcp }}"
+
+- name: Reloading service firewalld
+  systemd:
+    name: firewalld
+    state: restarted
+
+# - name: Opening udp ports in firewall for kubernetes
+#   firewalld:
+#     port: "{{ item }}/udp"
+#     zone: public
+#     permanent: yes
+#     immediate: yes
+#     state: enabled
+#   loop:
+#   - 8472
+#   - 4789
+#   - 6783-6784
+#   - 30000-32767
+
+# - name: Opening ports in tcp firewall for kubernetes
+#   firewalld:
+#     port: "{{ item }}/tcp"
+#     zone: public
+#     permanent: yes
+#     immediate: yes
+#     state: enabled
+#   loop:
+#   - 2376
+#   - 2379
+#   - 2380
+#   - 9099
+#   - 6783
+#   - 10250
+#   - 10254
+#   - 30000-32767

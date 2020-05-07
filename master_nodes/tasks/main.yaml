@@ -1,4 +1,4 @@
-# - include: firewall.yaml
+- include: firewall.yaml
 
 - name: Initializing Kubernetes
   shell: kubeadm init --pod-network-cidr=10.244.0.0/16 

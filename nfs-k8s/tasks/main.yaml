@@ -11,7 +11,7 @@
 - name: Configuring exports
   lineinfile:
     path: /etc/exports
-    line: "/data/nfs4 {{ hostvars[groups['worker_nodes'][index]]['ansible_host'] }}(rw,anonuid=1001)"
+    line: "/data/nfs4 {{ hostvars[groups['worker_nodes'][index]]['ansible_host'] }}(rw,anonuid=0)"
   loop: "{{ groups['worker_nodes']|flatten(levels=1) }}"
   loop_control:
     index_var: index
@@ -21,8 +21,8 @@
   args:
     executable: /bin/bash
 
-- name: Changing /data/nfs4 ownership to default
+- name: Changing /data/nfs4 ownership to root
   file:
     path: /data/nfs4
-    owner: default
+    owner: root
     recurse: yes

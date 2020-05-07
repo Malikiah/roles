@@ -1,5 +1,4 @@
 ---
-
 - name: Opening ports in firewall
   firewalld:
     port: "{{ item }}/tcp"

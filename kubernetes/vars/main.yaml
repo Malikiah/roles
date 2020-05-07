@@ -1,4 +1,7 @@
 ---
-flannel_ports:
+kubernetes_ports_udp:
   - 8285
   - 8472
+
+
+kubernetes_ports_tcp:

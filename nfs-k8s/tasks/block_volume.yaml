@@ -1,10 +1,4 @@
 ---
-- name: Creating Mount Directories
-  file:
-    path: "/data/nfs4/{{ item }}"
-    state: directory
-  loop: "{{ nfs_directories }}"
-
 - name: Making filesystem for nfs-volume-sfo2-01
   filesystem:
     fstype: ext4 
