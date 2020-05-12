@@ -2,7 +2,7 @@
 # - include: firewall.yaml
 # - include: packages.yaml
 
-- name: Setting kube config localhost configuration on user "{{ ansible_user_id }}"
+- name: "Setting kube config localhost configuration on user {{ ansible_user_id }}"
   copy:
     dest: $HOME/.kube/config
     content: "{{ hostvars[groups['master_nodes'][0]].kube_config.stdout }}"
