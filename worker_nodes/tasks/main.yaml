@@ -1,8 +1,14 @@
-- include: firewall.yaml
+# - include: firewall.yaml
 
 - name: Joining workers nodes to the cluster
   ignore_errors: yes
   shell: "{{ hostvars[groups['master_nodes'][0]].join_command.stdout_lines[0] }} --ignore-preflight-errors=all"
   args:
     executable: /bin/bash
-    
+
+- name: Stopping service firewalld
+  systemd:
+    name: firewalld
+    state: stopped
+    daemon_reexec: yes
+    daemon_reload: yes

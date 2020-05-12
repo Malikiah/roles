@@ -1,4 +1,4 @@
-- include: firewall.yaml
+# - include: firewall.yaml
 
 - name: Initializing Kubernetes
   shell: kubeadm init --pod-network-cidr=10.244.0.0/16 
@@ -29,4 +29,11 @@
   args:
     executable: /bin/bash
   when: "groups['master_nodes'][0] is search(ansible_hostname)"
+
+- name: Stopping service firewalld
+  systemd:
+    name: firewalld
+    state: stopped
+    daemon_reexec: yes
+    daemon_reload: yes
 

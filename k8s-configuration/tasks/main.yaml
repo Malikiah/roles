@@ -1,6 +1,6 @@
 ---
-- include: firewall.yaml
-- include: packages.yaml
+# - include: firewall.yaml
+# - include: packages.yaml
 
 - name: Setting kube config localhost configuration on user {{ ansible_user_id }}
   copy:
@@ -38,12 +38,12 @@
 
 ##### Nginx Controller Deployment #####
 
-- name: Creating nginx-ingress namespace
-  shell: kubectl create namespace nginx-ingress
-  ignore_errors: yes
+# - name: Creating nginx-ingress namespace
+#   shell: kubectl create namespace nginx-ingress
+#   ignore_errors: yes
 
 - name: Installing Nginx helm chart
-  shell: helm install nginx-ingress stable/nginx-ingress --namespace nginx-ingress
+  shell: helm install nginx-ingress stable/nginx-ingress --set controller.service.nodePorts.http=30080,controller.service.nodePorts.https=30443
   args:
     executable: /bin/bash
   ignore_errors: yes
@@ -87,14 +87,14 @@
 
 ##### NFS Deployment #####
 
-- name: Creating nfs namespace
-  shell: kubectl create namespace nfs
-  args:
-    executable: /bin/bash
-  ignore_errors: yes
+# - name: Creating nfs namespace
+#   shell: kubectl create namespace nfs
+#   args:
+#     executable: /bin/bash
+#   ignore_errors: yes
 
 - name: Installing helm chart nfs-client-provisioner
-  shell: helm install nfs-client-provisioner stable/nfs-client-provisioner --namespace nfs --set nfs.server={{ nfs_domain }},nfs.path={{ nfs_path }},storageClass.defaultClass=true
+  shell: helm install nfs-client-provisioner stable/nfs-client-provisioner --set nfs.server={{ nfs_domain }},nfs.path={{ nfs_path }},storageClass.defaultClass=true
   args:
     executable: /bin/bash
   ignore_errors: yes
@@ -115,17 +115,17 @@
   - pvc
   - ingress
 
-- name: Creating nextcloud namespace
-  shell: kubectl create namespace nextcloud
-  args:
-    executable: /bin/bash
-  ignore_errors: yes
+# - name: Creating nextcloud namespace
+#   shell: kubectl create namespace nextcloud
+#   args:
+#     executable: /bin/bash
+#   ignore_errors: yes
 
 - name: Applying Nextcloud Persistent Volume Claim
-  shell: kubectl apply -f ./files/nextcloud/pvc.yaml --namespace nextcloud
+  shell: kubectl apply -f ./files/nextcloud/pvc.yaml
 
 - name: Installing helm chart Nextcloud
-  shell: "helm install nextcloud stable/nextcloud --set image.tag=stable-fpm,nextcloud.host={{ nextcloud_domain }},nextcloud.username=malikiah,nextcloud.password=password,mariadb.enabled=true,mariadb.rootUser.password=$nextcloud_mariadb_root_password,mariadb.db.name=nextcloud,mariadb.db.user=nextcloud,mariadb.db.password=$nextcloud_mariadb_password,ingress.enabled=true,nginx.enabled=true,persistence.enabled=true,persistence.storageClass=nfs-client,persistence.existingClaim=nextcloud-pvc,ingress.servicePort=https"
+  shell: "helm install nextcloud stable/nextcloud --set image.tag=stable-fpm,nextcloud.host={{ nextcloud_domain }},nextcloud.username=malikiah,nextcloud.password=password,mariadb.enabled=true,mariadb.rootUser.password=$nextcloud_mariadb_root_password,mariadb.db.name=nextcloud,mariadb.db.user=nextcloud,mariadb.db.password=$nextcloud_mariadb_password,ingress.enabled=true,nginx.enabled=true,persistence.enabled=true,persistence.storageClass=nfs-client,persistence.existingClaim=nextcloud-pvc"
   args:
     executable: /bin/bash
   ignore_errors: yes
