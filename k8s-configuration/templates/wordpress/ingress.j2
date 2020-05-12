@@ -1,13 +1,16 @@
-
-apiVersion: extensions/v1beta1
+apiVersion: networking.k8s.io/v1beta1
 kind: Ingress
 metadata:
   name: wordpress-ingress
+  annotations: {
+    kubernetes.io/ingress.class: nginx,
+    cert-manager.io/issuer: "letsencrypt-{{ deployment_state }}",
+  }
 spec:
   tls:
   - hosts:
     - {{ wordpress_domain }}
-    secretName: nextcloud-secret
+    secretName: wordpress-tls
   rules:
   - host: {{ wordpress_domain }}
     http:
@@ -15,4 +18,4 @@ spec:
       - path: /
         backend:
           serviceName: wordpress
-          servicePort: 8443
+          servicePort: 443
