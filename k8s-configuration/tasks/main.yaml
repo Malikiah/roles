@@ -159,8 +159,8 @@
   - pvc
   - ingress
 
-- name: Installing helm chart Nextcloud
-  shell: "helm install nextcloud stable/wordpress --set image.tag=php7.4-fpm,wordpressUsername=$default_user,wordpressPassword=$default_password,wordpressEmail=$admin_email,mariadb.db.name=wordpress,mariadb.rootUser.password=$wordpress_mariadb_root_password,mariadb.db.user=wordpress,mariadb.db.password=$wordpress_mariadb_password,wordpressScheme=https,persistence.existingClaim=wordpress_pvc"
+- name: Installing helm chart Wordpress
+  shell: "helm install wordpress stable/wordpress --set image.tag=php7.4-fpm,wordpressUsername=$default_user,wordpressPassword=$default_password,wordpressEmail=$admin_email,mariadb.db.name=wordpress,mariadb.rootUser.password=$wordpress_mariadb_root_password,mariadb.db.user=wordpress,mariadb.db.password=$wordpress_mariadb_password,wordpressScheme=https,persistence.existingClaim=wordpress_pvc"
   args:
     executable: /bin/bash
   ignore_errors: yes
