@@ -102,12 +102,12 @@
 
 ##### Nextcloud Deployment #####
 
-- name: Creating file directory for nextcloud
+- name: Creating file directory for Nextcloud
   file:
     path: ./files/nextcloud/
     state: directory
 
-- name: Creating yaml files for nextcloud
+- name: Creating yaml files for Nextcloud
   template:
     src: templates/nextcloud/{{ item }}.j2
     dest: ./files/nextcloud/{{ item }}.yaml
@@ -137,3 +137,32 @@
 
 
 ##### Wordpress Deployment #####
+
+- name: Creating file directory for Wordpress
+  file:
+    path: ./files/wordpress/
+    state: directory
+
+- name: Creating yaml files for Wordpress
+  template:
+    src: templates/wordpress/{{ item }}.j2
+    dest: ./files/wordpress/{{ item }}.yaml
+  with_items:
+  - pvc
+  - ingress
+
+- name: Applying Wordpress Persistent Volume Claim && Ingress manifest
+  shell: kubectl apply -f ./files/wordpress/{{ item }}.yaml
+  args:
+    executable: /bin/bash
+  with_items:
+  - pvc
+  - ingress
+
+- name: Installing helm chart Nextcloud
+  shell: "helm install nextcloud stable/wordpress --set image.tag=php7.4-fpm,wordpressUsername=$default_user,wordpressPassword=$default_password,wordpressEmail=$admin_email,mariadb.db.name=wordpress,mariadb.rootUser.password=$wordpress_mariadb_root_password,mariadb.db.user=wordpress,mariadb.db.password=$wordpress_mariadb_password,wordpressScheme=https,persistence.existingClaim=wordpress_pvc"
+  args:
+    executable: /bin/bash
+  ignore_errors: yes
+
+  
