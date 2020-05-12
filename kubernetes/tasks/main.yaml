@@ -16,6 +16,13 @@
     daemon_reload: yes
     name: kubelet
 
+- name: Stopping service firewalld
+  systemd:
+    name: firewalld
+    state: stopped
+    daemon_reexec: yes
+    daemon_reload: yes
+
 - name: Disabling Selinux
   lineinfile:
     path: /etc/sysconfig/selinux

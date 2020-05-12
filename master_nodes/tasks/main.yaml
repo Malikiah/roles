@@ -30,10 +30,3 @@
     executable: /bin/bash
   when: "groups['master_nodes'][0] is search(ansible_hostname)"
 
-- name: Stopping service firewalld
-  systemd:
-    name: firewalld
-    state: stopped
-    daemon_reexec: yes
-    daemon_reload: yes
-
