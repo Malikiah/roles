@@ -13,18 +13,18 @@
   register: join_command
   when: "groups['master_nodes'][0] is search(ansible_hostname)"
 
-- name: Creating kube_config
+- name: Creating kube_config variable
   command: cat /etc/kubernetes/admin.conf
   register: kube_config
   when: "groups['master_nodes'][0] is search(ansible_hostname)"
 
-- name: Create .kube directory
+- name: Creating .kube directory
   file:
     path: $HOME/.kube
     state: directory
   when: "groups['master_nodes'][0] is search(ansible_hostname)"
 
-- name:
+- name: Adding kube config to master_node user
   shell: sudo cp -r /etc/kubernetes/admin.conf $HOME/.kube/config && chown -R {{ ansible_user }} $HOME/.kube/config
   args:
     executable: /bin/bash

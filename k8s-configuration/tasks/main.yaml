@@ -160,7 +160,22 @@
   - ingress
 
 - name: Installing helm chart Wordpress
-  shell: "helm install wordpress stable/wordpress --set image.tag=latest,wordpressUsername=$default_user,wordpressPassword=$default_user_password,wordpressEmail=$admin_email,mariadb.db.name=wordpress,mariadb.rootUser.password=$wordpress_mariadb_root_password,mariadb.db.user=wordpress,mariadb.db.password=$wordpress_mariadb_password,wordpressScheme=http,persistence.existingClaim=wordpress-pvc,persistence.storageClass=nfs-client,service.type=ClusterIP,service.port=8080,service.httpsPort=8443,livenessProbe.enabled=false,readinessProbe.enabled=false"
+  shell: "helm install wordpress stable/wordpress --set 
+  \ image.tag=latest,
+  \ wordpressUsername=$default_user,
+  \ wordpressPassword=$default_user_password,
+  \ wordpressEmail=$admin_email,
+  \ mariadb.db.name=wordpress,
+  \ mariadb.rootUser.password=$wordpress_mariadb_root_password,
+  \ mariadb.db.user=wordpress,
+  \ mariadb.db.password=$wordpress_mariadb_password,
+  \ wordpressScheme=http,persistence.existingClaim=wordpress-pvc,
+  \ persistence.storageClass=nfs-client,
+  \ service.type=ClusterIP,
+  \ service.port=8080,
+  \ service.httpsPort=8443,
+  \ livenessProbe.enabled=false,
+  \ readinessProbe.enabled=false"
   args:
     executable: /bin/bash
   ignore_errors: yes
