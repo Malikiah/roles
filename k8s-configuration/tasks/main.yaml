@@ -130,7 +130,7 @@
   - ingress
 
 - name: Installing helm chart Nextcloud
-  shell: "helm install nextcloud stable/nextcloud --set image.tag=stable-fpm,nextcloud.host={{ nextcloud_domain }},nextcloud.username=malikiah,nextcloud.password=password,mariadb.enabled=true,mariadb.rootUser.password=$nextcloud_mariadb_root_password,mariadb.db.name=nextcloud,mariadb.db.user=nextcloud,mariadb.db.password=$nextcloud_mariadb_password,nginx.enabled=true,persistence.enabled=true,persistence.storageClass=nfs-client,persistence.existingClaim=nextcloud-pvc,readinessProbe.enabled=false"
+  shell: "helm install nextcloud stable/nextcloud --set image.tag=stable-fpm,nextcloud.host={{ nextcloud_domain }},nextcloud.username={{ default_user }},nextcloud.password={{ default_user_password }},mariadb.enabled=true,mariadb.rootUser.password=$nextcloud_mariadb_root_password,mariadb.db.name=nextcloud,mariadb.db.user=nextcloud,mariadb.db.password=$nextcloud_mariadb_password,nginx.enabled=true,persistence.enabled=true,persistence.storageClass=nfs-client,persistence.existingClaim=nextcloud-pvc,readinessProbe.enabled=false"
   args:
     executable: /bin/bash
   ignore_errors: yes
@@ -160,7 +160,7 @@
   - ingress
 
 - name: Installing helm chart Wordpress
-  shell: "helm install wordpress stable/wordpress --set image.tag=latest,wordpressUsername=$default_user,wordpressPassword=$default_password,wordpressEmail=$admin_email,mariadb.db.name=wordpress,mariadb.rootUser.password=$wordpress_mariadb_root_password,mariadb.db.user=wordpress,mariadb.db.password=$wordpress_mariadb_password,wordpressScheme=http,persistence.existingClaim=wordpress-pvc,persistence.storageClass=nfs-client,service.type=ClusterIP,service.port=8080,service.httpsPort=8443,livenessProbe.enabled=false,readinessProbe.enabled=false"
+  shell: "helm install wordpress stable/wordpress --set image.tag=latest,wordpressUsername=$default_user,wordpressPassword=$default_user_password,wordpressEmail=$admin_email,mariadb.db.name=wordpress,mariadb.rootUser.password=$wordpress_mariadb_root_password,mariadb.db.user=wordpress,mariadb.db.password=$wordpress_mariadb_password,wordpressScheme=http,persistence.existingClaim=wordpress-pvc,persistence.storageClass=nfs-client,service.type=ClusterIP,service.port=8080,service.httpsPort=8443,livenessProbe.enabled=false,readinessProbe.enabled=false"
   args:
     executable: /bin/bash
   ignore_errors: yes
