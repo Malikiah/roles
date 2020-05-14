@@ -80,8 +80,8 @@
 
 - name: Creating yaml files for cert-manager
   template:
-    src: templates/nextcloud/{{ item }}.j2
-    dest: ./files/nextcloud/{{ item }}.yaml
+    src: templates/cert-manager/{{ item }}.j2
+    dest: ./files/cert-manager/{{ item }}.yaml
   with_items:
   - issuer
 
