@@ -73,17 +73,24 @@
     executable: /bin/bash
   ignore_errors: yes
 
-# - name: Installing Cert Manager
-#   shell: kubectl apply -f ansible/kubernetes_files/cert-manager/cert-manager.yaml
-#   args:
-#     executable: /bin/bash
-#   ignore_errors: yes
+- name: Creating file directory for cert-manager
+  file:
+    path: ./files/cert-manager/
+    state: directory
 
-# - name: Applying certification issuer
-#   shell: kubectl apply -f kubernetes_files/cert-manager/staging-issuer.yaml
-#   args:
-#     executable: /bin/bash
- 
+- name: Creating yaml files for cert-manager
+  template:
+    src: templates/nextcloud/{{ item }}.j2
+    dest: ./files/nextcloud/{{ item }}.yaml
+  with_items:
+  - issuer
+
+- name: Applying issuer for cert-manager
+  shell: kubectl apply -f ./files/cert-manager/{{ item }}.yaml
+  args:
+    executable: /bin/bash
+  with_items:
+  - issuer
 
 ##### NFS Deployment #####
 
