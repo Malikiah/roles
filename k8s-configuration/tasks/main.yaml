@@ -83,14 +83,16 @@
     src: templates/cert-manager/{{ item }}.j2
     dest: ./files/cert-manager/{{ item }}.yaml
   with_items:
-  - issuer
+  - prod-issuer
+  - staging-issuer
 
 - name: Applying issuer for cert-manager
   shell: kubectl apply -f ./files/cert-manager/{{ item }}.yaml
   args:
     executable: /bin/bash
   with_items:
-  - issuer
+  - prod-issuer
+  - staging-issuer
 
 ##### NFS Deployment #####
 
