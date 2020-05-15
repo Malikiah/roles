@@ -86,6 +86,7 @@
   - prod-issuer
   - staging-issuer
 
+  
 - name: Applying issuer for cert-manager
   shell: kubectl apply -f ./files/cert-manager/{{ item }}.yaml
   args:
@@ -103,7 +104,9 @@
 #   ignore_errors: yes
 
 - name: Installing helm chart nfs-client-provisioner
-  shell: helm install nfs-client-provisioner stable/nfs-client-provisioner --set nfs.server={{ nfs_domain }},nfs.path={{ nfs_path }},storageClass.defaultClass=true
+  shell: "helm install \
+  nfs-client-provisioner stable/nfs-client-provisioner \
+  --set nfs.server={{ nfs_domain }},nfs.path={{ nfs_path }},storageClass.defaultClass=true"
   args:
     executable: /bin/bash
   ignore_errors: yes
@@ -139,7 +142,9 @@
   - ingress
 
 - name: Installing helm chart Nextcloud
-  shell: "helm install nextcloud stable/nextcloud --set image.tag=stable-fpm,nextcloud.host={{ nextcloud_domain }},nextcloud.username=$default_user,nextcloud.password=$default_user_password,mariadb.enabled=true,mariadb.rootUser.password=$nextcloud_mariadb_root_password,mariadb.db.name=nextcloud,mariadb.db.user=nextcloud,mariadb.db.password=$nextcloud_mariadb_password,nginx.enabled=true,persistence.enabled=true,persistence.storageClass=nfs-client,persistence.existingClaim=nextcloud-pvc,readinessProbe.enabled=false"
+  shell: "helm install \
+  nextcloud stable/nextcloud \
+  --set image.tag=stable-fpm,nextcloud.host={{ nextcloud_domain }},nextcloud.username=$default_user,nextcloud.password=$default_user_password,mariadb.enabled=true,mariadb.rootUser.password=$nextcloud_mariadb_root_password,mariadb.db.name=nextcloud,mariadb.db.user=nextcloud,mariadb.db.password=$nextcloud_mariadb_password,nginx.enabled=true,persistence.enabled=true,persistence.storageClass=nfs-client,persistence.existingClaim=nextcloud-pvc,readinessProbe.enabled=false"
   args:
     executable: /bin/bash
   ignore_errors: yes
