@@ -4,7 +4,7 @@ metadata:
   name: nextcloud-ingress
   annotations: {
     kubernetes.io/ingress.class: nginx,
-    certmanager.k8s.io/issuer: "letsencrypt-{{ deployment_state }}",
+    certmanager.io/cluster-issuer: "letsencrypt-{{ deployment_state }}",
   }
 spec:
   tls:
