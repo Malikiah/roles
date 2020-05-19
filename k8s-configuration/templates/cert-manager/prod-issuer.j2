@@ -16,6 +16,8 @@ spec:
 
     # Add a single challenge solver, HTTP01 using nginx
     solvers:
-      - http01:
-          ingress:
-            class: nginx
+    # An empty 'selector' means that this solver matches all domains
+    - selector: {}
+      http01:
+        ingress:
+          class: nginx
