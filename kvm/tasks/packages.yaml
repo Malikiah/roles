@@ -1,0 +1,11 @@
+- name: Installing required packages
+  dnf:
+    name:
+    - bridge-utils 
+    - libvirt 
+    - virt-install 
+    - qemu-kvm
+    - virt-top 
+    - libguestfs-tools
+    update_cache: true
+    state: latest

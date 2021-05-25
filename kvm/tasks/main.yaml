@@ -1,0 +1,15 @@
+---
+- include: firewall.yaml
+- include: packages.yaml 
+
+- name: adding existing user "{{ ansible_user }}" to group libvirt
+   user:
+     name: "{{ ansible_user }}"
+     groups: libvirt
+     append: yes
+   become: yes
+
+- service: starting libvirtd
+    name: libvirtd
+    state: started
+    enabled: yes

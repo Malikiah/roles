@@ -11,10 +11,18 @@
         line: 'Banner /etc/ssh/sshd-banner'
 
   - name: Disbaling root login
+    file:
+      path: /etc/sshd/sshd_config.d/01-permitrootlogin.conf
+
+  - name: Disbaling root login
     lineinfile:
-        path: /etc/ssh/sshd_config
+        path: /etc/ssh/sshd_config.d/01-permitrootlogin.conf
         regexp: '^PermitRootLogin yes'
         line: 'PermitRootLogin no'
+  
+  - name: Disbaling root login
+    file:
+      path: /etc/sshd/sshd_config.d/01-passwordauthentication.conf
 
   - name: Restarting sshd
     shell: systemctl restart sshd

@@ -3,3 +3,4 @@
 - include: firewall.yaml
 - include: sysctl.yaml
 - include: user.yaml
+- include: ssh.yaml
