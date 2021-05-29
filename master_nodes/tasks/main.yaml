@@ -1,32 +1,42 @@
 # - include: firewall.yaml
 
+- debug:
+    msg: "{{hostvars[groups['master_nodes'][0]].inventory_hostname}} {{ansible_hostname}}"
+
+- name: Setting hostname of nodes
+  shell: sudo hostnamectl set-hostname {{hostvars[groups['master_nodes'][0]].inventory_hostname}}
+
+
+- debug:
+    msg: "{{hostvars[groups['master_nodes'][0]].inventory_hostname}} {{ansible_hostname}}"
+
 - name: Initializing Kubernetes
   shell: kubeadm init --pod-network-cidr=10.244.0.0/16 
   args:
     executable: /bin/bash
   run_once: True
   ignore_errors: yes
-  when: "groups['master_nodes'][0] is search(ansible_hostname)"
+  when: "{{hostvars[groups['master_nodes'][0]].inventory_hostname is search(ansible_hostname)"
 
 - name: Generate join command
   command: kubeadm token create --print-join-command
   register: join_command
-  when: "groups['master_nodes'][0] is search(ansible_hostname)"
+  when: "{{hostvars[groups['master_nodes'][0]].inventory_hostname is search(ansible_hostname)"
 
 - name: Creating kube_config variable
   command: cat /etc/kubernetes/admin.conf
   register: kube_config
-  when: "groups['master_nodes'][0] is search(ansible_hostname)"
+  when: "{{hostvars[groups['master_nodes'][0]].inventory_hostname is search(ansible_hostname)"
 
 - name: Creating .kube directory
   file:
     path: $HOME/.kube
     state: directory
-  when: "groups['master_nodes'][0] is search(ansible_hostname)"
+  when: "{{hostvars[groups['master_nodes'][0]].inventory_hostname is search(ansible_hostname)"
 
 - name: Adding kube config to master_node user
   shell: sudo cp -r /etc/kubernetes/admin.conf $HOME/.kube/config && chown -R {{ ansible_user }} $HOME/.kube/config
   args:
     executable: /bin/bash
-  when: "groups['master_nodes'][0] is search(ansible_hostname)"
+  when: "{{hostvars[groups['master_nodes'][0]].inventory_hostname is search(ansible_hostname)"
 

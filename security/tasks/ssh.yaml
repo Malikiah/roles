@@ -12,17 +12,23 @@
 
   - name: Disbaling root login
     file:
-      path: /etc/sshd/sshd_config.d/01-permitrootlogin.conf
+      path: /etc/ssh/sshd_config.d/01-permitrootlogin.conf
+      state: touch
 
   - name: Disbaling root login
     lineinfile:
         path: /etc/ssh/sshd_config.d/01-permitrootlogin.conf
-        regexp: '^PermitRootLogin yes'
         line: 'PermitRootLogin no'
   
-  - name: Disbaling root login
+  - name: Disbaling password login
     file:
-      path: /etc/sshd/sshd_config.d/01-passwordauthentication.conf
+      path: /etc/ssh/sshd_config.d/01-passwordauthentication.conf
+      state: touch
+
+  - name: Disbaling password login
+    lineinfile:
+        path: /etc/ssh/sshd_config.d/01-passwordauthentication.conf
+        line: 'PasswordAuthentication no'
 
   - name: Restarting sshd
     shell: systemctl restart sshd

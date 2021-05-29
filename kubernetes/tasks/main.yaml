@@ -2,12 +2,12 @@
 - include: packages.yaml
 - include: docker.yaml
 
-- name: Starting & enabling Docker
+- name: Starting & enabling Podman
   systemd:
     state: started
     enabled: yes
     daemon_reload: yes
-    name: docker
+    name: podman
   
 - name: Starting & enabling kubelet
   systemd:

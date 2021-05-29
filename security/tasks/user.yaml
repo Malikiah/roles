@@ -13,6 +13,11 @@
     group: wheel
     recurse: true
 
+- name: Creating authorized_keys file
+  file:
+    path: /home/default/.ssh/authorized_keys
+    state: touch
+    
 - name:
   lineinfile:
     path: /home/default/.ssh/authorized_keys
@@ -29,8 +34,4 @@
     regexp: '^# %wheel        ALL=(ALL)       NOPASSWD: ALL'
     line: '%wheel        ALL=(ALL)       NOPASSWD: ALL'
 
-- name: Creating vim run time directory /home/default/.vim_runtime/
-  file:
-    path: /home/default/.vim_runtime/
-    state: directory
 

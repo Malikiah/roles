@@ -12,8 +12,8 @@
     path: ~/.bash_profile
     line: export KUBECONFIG=$HOME/.kube/config
 
-- name: Applying Flannel container network interface
-  shell: kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
+- name: Applying Weavenet container network interface
+  shell: kubectl apply -f "https://cloud.weave.works/k8s/net?k8s-version=$(kubectl version | base64 | tr -d '\n')"
   args:
     executable: /bin/bash
 
@@ -43,7 +43,7 @@
 #   ignore_errors: yes
 
 - name: Installing Nginx helm chart
-  shell: helm install nginx-ingress stable/nginx-ingress --set controller.service.nodePorts.http=30080,controller.service.nodePorts.https=30443
+  shell: helm install nginx-ingress stable/nginx-ingress --set controller.daemonset.useHostPort=true
   args:
     executable: /bin/bash
   ignore_errors: yes
@@ -95,98 +95,5 @@
   - prod-issuer
   - staging-issuer
 
-##### NFS Deployment #####
-
-# - name: Creating nfs namespace
-#   shell: kubectl create namespace nfs
-#   args:
-#     executable: /bin/bash
-#   ignore_errors: yes
-
-- name: Installing helm chart nfs-client-provisioner
-  shell: "helm install \
-  nfs-client-provisioner stable/nfs-client-provisioner \
-  --set nfs.server={{ nfs_domain }},nfs.path={{ nfs_path }},storageClass.defaultClass=true"
-  args:
-    executable: /bin/bash
-  ignore_errors: yes
-
-
-##### Nextcloud Deployment #####
-
-- name: Creating file directory for Nextcloud
-  file:
-    path: ./files/nextcloud/
-    state: directory
-
-- name: Creating yaml files for Nextcloud
-  template:
-    src: templates/nextcloud/{{ item }}.j2
-    dest: ./files/nextcloud/{{ item }}.yaml
-  with_items:
-  - pvc
-  - ingress
-
-# - name: Creating nextcloud namespace
-#   shell: kubectl create namespace nextcloud
-#   args:
-#     executable: /bin/bash
-#   ignore_errors: yes
-
-- name: Applying Nextcloud Persistent Volume Claim && Ingress manifest
-  shell: kubectl apply -f ./files/nextcloud/{{ item }}.yaml
-  args:
-    executable: /bin/bash
-  with_items:
-  - pvc
-  - ingress
-
-- name: Installing helm chart Nextcloud
-  shell: "helm install \
-  nextcloud stable/nextcloud \
-  --set image.tag=stable-fpm,nextcloud.host={{ nextcloud_domain }},nextcloud.username=$default_user,nextcloud.password=$default_user_password,mariadb.enabled=true,mariadb.rootUser.password=$nextcloud_mariadb_root_password,mariadb.db.name=nextcloud,mariadb.db.user=nextcloud,mariadb.db.password=$nextcloud_mariadb_password,nginx.enabled=true,persistence.enabled=true,persistence.storageClass=nfs-client,persistence.existingClaim=nextcloud-pvc,readinessProbe.enabled=false"
-  args:
-    executable: /bin/bash
-  ignore_errors: yes
-
-
-##### Wordpress Deployment #####
-
-- name: Adding bitnami repo for helm
-  shell: helm repo add bitnami https://charts.bitnami.com/bitnami
-  args:
-    executable: /bin/bash
-    
-- name: Updating helm repository
-  shell: helm repo update
-  args:
-    executable: /bin/bash
-
-- name: Creating file directory for Wordpress
-  file:
-    path: ./files/wordpress/
-    state: directory
-
-- name: Creating yaml files for Wordpress
-  template:
-    src: templates/wordpress/{{ item }}.j2
-    dest: ./files/wordpress/{{ item }}.yaml
-  with_items:
-  - pvc
-  - ingress
-
-- name: Applying Wordpress Persistent Volume Claim && Ingress manifest
-  shell: kubectl apply -f ./files/wordpress/{{ item }}.yaml
-  args:
-    executable: /bin/bash
-  with_items:
-  - pvc
-  - ingress
-
-- name: Installing helm chart Wordpress
-  shell: "helm install wordpress bitnami/wordpress --set image.tag=latest,wordpressUsername=$default_user,wordpressPassword=$default_user_password,wordpressEmail=$admin_email,mariadb.db.name=wordpress,mariadb.rootUser.password=$wordpress_mariadb_root_password,mariadb.db.user=wordpress,mariadb.db.password=$wordpress_mariadb_password,wordpressScheme=https,persistence.existingClaim=wordpress-pvc,persistence.storageClass=nfs-client,service.type=ClusterIP,service.port=8080,service.httpsPort=8443,livenessProbe.enabled=false,readinessProbe.enabled=false"
-  args:
-    executable: /bin/bash
-  ignore_errors: yes
 
   

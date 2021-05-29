@@ -19,7 +19,6 @@
 - name: Installing required packages
   dnf:
     name:
-    - nfs-utils
     - kubectl
     - kubeadm
     - kubelet
@@ -29,10 +28,11 @@
     - dnf-plugins-core
     - ipvsadm
     - python3
+    - podman
     update_cache: true
     state: latest
 
-- name: Installing Docker
-  shell: dnf install -y docker-ce docker-ce-cli containerd.io --nobest
-  args:
-    executable: /bin/bash
+# - name: Installing Docker
+#   shell: dnf install -y docker-ce docker-ce-cli containerd.io --nobest
+#   args:
+#     executable: /bin/bash
