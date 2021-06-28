@@ -1,5 +1,8 @@
 ---
 # Setting ssh configuration
+  - name: Setting hostname of nodes
+    shell: sudo hostnamectl set-hostname {{hostvars[groups['master_nodes'][groups['master_nodes'].index(inventory_hostname)]].inventory_hostname}}
+
   - name: Setting ssh banner configuration
     template:
       src: ./templates/sshd-banner.j2
@@ -25,10 +28,10 @@
       path: /etc/ssh/sshd_config.d/01-passwordauthentication.conf
       state: touch
 
-  - name: Disbaling password login
-    lineinfile:
-        path: /etc/ssh/sshd_config.d/01-passwordauthentication.conf
-        line: 'PasswordAuthentication no'
+  # - name: Disbaling password login
+  #   lineinfile:
+  #       path: /etc/ssh/sshd_config.d/01-passwordauthentication.conf
+  #       line: 'PasswordAuthentication no'
 
   - name: Changing Ansible user to default
     delegate_to: localhost

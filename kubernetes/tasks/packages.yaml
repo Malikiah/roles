@@ -11,10 +11,13 @@
     src: files/kubernetes.repo
     dest: /etc/yum.repos.d/kubernetes.repo
 
-- name: Adding Docker repository
-  shell: dnf config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
-  args:
-    executable: /bin/bash
+- name: Enabling CRI-O
+  shell: sudo dnf module enable cri-o:1.14 -y
+
+# - name: Adding Docker repository
+#   shell: dnf config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
+#   args:
+#     executable: /bin/bash
     
 - name: Installing required packages
   dnf:
@@ -29,6 +32,7 @@
     - ipvsadm
     - python3
     - podman
+    - cri-o
     update_cache: true
     state: latest
 

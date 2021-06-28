@@ -1,42 +1,40 @@
 # - include: firewall.yaml
 
 - debug:
-    msg: "{{hostvars[groups['master_nodes'][0]].inventory_hostname}} {{ansible_hostname}}"
-
-- name: Setting hostname of nodes
-  shell: sudo hostnamectl set-hostname {{hostvars[groups['master_nodes'][0]].inventory_hostname}}
-
+    msg: "{{hostvars[groups['master_nodes'][groups['master_nodes'].index(inventory_hostname)]].inventory_hostname}}"
 
 - debug:
-    msg: "{{hostvars[groups['master_nodes'][0]].inventory_hostname}} {{ansible_hostname}}"
+    msg: "{{hostvars[groups['master_nodes'][0]].inventory_hostname}} {{ansible_fqdn}}"
 
 - name: Initializing Kubernetes
-  shell: kubeadm init --pod-network-cidr=10.244.0.0/16 
-  args:
-    executable: /bin/bash
-  run_once: True
-  ignore_errors: yes
-  when: "{{hostvars[groups['master_nodes'][0]].inventory_hostname is search(ansible_hostname)"
+  shell: sudo kubeadm init --pod-network-cidr={{pod_network_cidr}}
+  # args:
+  #   executable: /bin/bash
+  # run_once: True
+  # ignore_errors: yes
+  when: "hostvars[groups['master_nodes'][0]].inventory_hostname is search(ansible_fqdn)"
 
 - name: Generate join command
   command: kubeadm token create --print-join-command
   register: join_command
-  when: "{{hostvars[groups['master_nodes'][0]].inventory_hostname is search(ansible_hostname)"
+  when: "hostvars[groups['master_nodes'][0]].inventory_hostname is search(ansible_fqdn)"
 
 - name: Creating kube_config variable
   command: cat /etc/kubernetes/admin.conf
   register: kube_config
-  when: "{{hostvars[groups['master_nodes'][0]].inventory_hostname is search(ansible_hostname)"
+  when: "hostvars[groups['master_nodes'][0]].inventory_hostname is search(ansible_fqdn)"
 
 - name: Creating .kube directory
   file:
     path: $HOME/.kube
     state: directory
-  when: "{{hostvars[groups['master_nodes'][0]].inventory_hostname is search(ansible_hostname)"
+  when: "hostvars[groups['master_nodes'][0]].inventory_hostname is search(ansible_fqdn)"
 
 - name: Adding kube config to master_node user
   shell: sudo cp -r /etc/kubernetes/admin.conf $HOME/.kube/config && chown -R {{ ansible_user }} $HOME/.kube/config
   args:
     executable: /bin/bash
-  when: "{{hostvars[groups['master_nodes'][0]].inventory_hostname is search(ansible_hostname)"
+  when: "hostvars[groups['master_nodes'][0]].inventory_hostname is search(ansible_fqdn)"
 
+- name: Join extra controlplane nodes
+  shell: "{{join_command}} --control-plane"

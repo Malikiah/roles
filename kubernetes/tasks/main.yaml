@@ -1,6 +1,32 @@
 # - include: firewall.yaml
 - include: packages.yaml
-- include: docker.yaml
+# - include: docker.yaml
+
+- name: Starting & enabling CRI-O
+  systemd:
+    state: started
+    enabled: yes
+    daemon_reload: yes
+    name: cri-o
+
+- name: Creating /etc/crio/crio.conf.d directory
+  file:
+    path: /etc/crio/crio.conf.d
+    state: directory
+
+- name: Creating config file /etc/crio/crio.conf.d/02-cgroup-manager.conf
+  file:
+    path: /etc/crio/crio.conf.d/02-cgroup-manager.conf
+    state: touch
+
+- name: Adding configuration to /etc/crio/crio.conf.d/02-cgroup-manager.conf
+  copy:
+    dest: /etc/crio/crio.conf.d/02-cgroup-manager.conf
+    content: |
+      [crio.runtime]
+      conmon_cgroup = "pod"
+      cgroup_manager = "cgroupfs"
+    
 
 - name: Starting & enabling Podman
   systemd:
@@ -51,11 +77,22 @@
     state: present
     reload: yes
 
+- name: Allowing ipv4 forwarding
+  sysctl:
+    name: net.ipv4.ip_forward
+    value: '1'
+    sysctl_set: yes
+    state: present
+    reload: yes
+
+# - name: Turn off Swap
+#   lineinfile:
+#     path: /etc/fstab
+#     regexp: '^/dev/mapper/cl-swap'
+#     line: '#/dev/mapper/cl-swap'
+
 - name: Turn off Swap
-  lineinfile:
-    path: /etc/fstab
-    regexp: '^/dev/mapper/cl-swap'
-    line: '#/dev/mapper/cl-swap'
+  shell: sudo swapoff -a
 
 - name: Download cni-plugins
   get_url:
