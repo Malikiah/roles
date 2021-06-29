@@ -33,12 +33,12 @@
   #       path: /etc/ssh/sshd_config.d/01-passwordauthentication.conf
   #       line: 'PasswordAuthentication no'
 
-  - name: Changing Ansible user to default
-    delegate_to: localhost
-    lineinfile:
-      path: inventory.cfg
-      regexp: '^ansible_user = root'
-      line: 'ansible_user = default'
+  # - name: Changing Ansible user to default
+  #   delegate_to: localhost
+  #   lineinfile:
+  #     path: inventory.cfg
+  #     regexp: '^ansible_user = root'
+  #     line: 'ansible_user = default'
 
   - name: Restarting sshd
     shell: systemctl restart sshd
