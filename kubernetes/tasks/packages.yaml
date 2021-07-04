@@ -11,13 +11,9 @@
     src: files/kubernetes.repo
     dest: /etc/yum.repos.d/kubernetes.repo
 
-- name: Enabling CRI-O
-  shell: sudo dnf module enable cri-o:1.14 -y
+# - name: Enabling CRI-O
+#   shell: sudo dnf module enable cri-o:1.14 -y
 
-# - name: Adding Docker repository
-#   shell: dnf config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
-#   args:
-#     executable: /bin/bash
     
 - name: Installing required packages
   dnf:
@@ -36,7 +32,7 @@
     update_cache: true
     state: latest
 
-# - name: Installing Docker
-#   shell: dnf install -y docker-ce docker-ce-cli containerd.io --nobest
-#   args:
-#     executable: /bin/bash
+- name: Installing Docker
+  shell: dnf install -y docker-ce docker-ce-cli containerd.io --nobest
+  args:
+    executable: /bin/bash

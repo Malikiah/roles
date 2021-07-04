@@ -1,7 +1,7 @@
 ---
 # Setting ssh configuration
   - name: Setting hostname of nodes
-    shell: sudo hostnamectl set-hostname {{hostvars[groups['master_nodes'][groups['master_nodes'].index(inventory_hostname)]].inventory_hostname}}
+    shell: sudo hostnamectl set-hostname {{hostvars[groups['nodes'][groups['nodes'].index(inventory_hostname)]].inventory_hostname}}
 
   - name: Setting ssh banner configuration
     template:
