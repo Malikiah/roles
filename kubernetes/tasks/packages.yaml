@@ -32,7 +32,3 @@
     update_cache: true
     state: latest
 
-- name: Installing Docker
-  shell: dnf install -y docker-ce docker-ce-cli containerd.io --nobest
-  args:
-    executable: /bin/bash

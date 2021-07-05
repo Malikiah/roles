@@ -2,13 +2,6 @@
 - include: packages.yaml
 - include: docker.yaml
 
-- name: Starting & enabling docker
-  systemd:
-    state: started
-    enabled: yes
-    daemon_reload: yes
-    name: docker
-
 # - name: Starting & enabling CRI-O
 #   systemd:
 #     state: started
