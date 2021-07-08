@@ -24,10 +24,10 @@
     src: files/daemon.json
     dest: /etc/docker/daemon.json
 
-- name: Creating docker service directory /etc/systemd/system/docker.service.d
-  file:
-    path: /etc/systemd/system/docker.service.d
-    state: directory
+# - name: Creating docker service directory /etc/systemd/system/docker.service.d
+#   file:
+#     path: /etc/systemd/system/docker.service.d
+#     state: directory
 
 - name: Starting & enabling docker
   systemd:

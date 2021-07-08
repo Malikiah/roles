@@ -94,22 +94,22 @@
 - name: Turn off Swap
   shell: sudo swapoff -a
 
-- name: Download cni-plugins
-  get_url:
-    url: https://github.com/containernetworking/plugins/releases/download/v0.7.1/cni-plugins-amd64-v0.7.1.tgz
-    dest: .
+# - name: Download cni-plugins
+#   get_url:
+#     url: https://github.com/containernetworking/plugins/releases/download/v0.7.1/cni-plugins-amd64-v0.7.1.tgz
+#     dest: .
 
-- name: mkdir /opt/cni/bin/
-  file:
-    path: /opt/cni/bin/
-    state: directory
+# - name: mkdir /opt/cni/bin/
+#   file:
+#     path: /opt/cni/bin/
+#     state: directory
 
-- name: Extract cni-plugins-amd64-v0.7.1.tgz into /opt/cni/bin/
-  shell: tar -xvf cni-plugins-amd64-v0.7.1.tgz -C /opt/cni/bin/
-  args:
-    executable: /bin/bash
+# - name: Extract cni-plugins-amd64-v0.7.1.tgz into /opt/cni/bin/
+#   shell: tar -xvf cni-plugins-amd64-v0.7.1.tgz -C /opt/cni/bin/
+#   args:
+#     executable: /bin/bash
 
-- name: Clean artifact cni-plugins
-  file:
-    state: absent
-    path: cni-plugins-amd64-v0.7.1.tgz
+# - name: Clean artifact cni-plugins
+#   file:
+#     state: absent
+#     path: cni-plugins-amd64-v0.7.1.tgz

@@ -1,10 +1,18 @@
 ---
-- name: Removing libnfsidmap
-  dnf:
-    name: 
-    - libnfsidmap
-    state: absent
-    autoremove: yes
+# - name: Removing libnfsidmap
+#   dnf:
+#     name: 
+#     - libnfsidmap
+#     state: absent
+#     autoremove: yes
+
+- copy:
+    content: |
+      overlay
+      br_netfilter
+    dest: /etc/modules-load.d/k8s.conf
+
+- shell: sudo modprobe overlay && sudo modprobe br_netfilter
 
 - name: Adding Kubernetes repository
   copy:
@@ -27,8 +35,6 @@
     - dnf-plugins-core
     - ipvsadm
     - python3
-    - podman
-    - cri-o
     update_cache: true
     state: latest
 
