@@ -7,7 +7,7 @@
     msg: "{{hostvars[groups['master_nodes'][0]].inventory_hostname}} {{ansible_fqdn}}"
 
 - name: Initializing Kubernetes
-  shell: sudo kubeadm init --pod-network-cidr={{pod_network_cidr}}
+  shell: sudo kubeadm init --pod-network-cidr={{pod_network_cidr}} --control-plane-endpoint={{ ansible_host }}
   # args:
   #   executable: /bin/bash
   # run_once: True
