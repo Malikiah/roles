@@ -36,5 +36,9 @@
     executable: /bin/bash
   when: "hostvars[groups['master_nodes'][0]].inventory_hostname is search(ansible_fqdn)"
 
+- name:
+  shell: scp -r /etc/kubernetes/pki {{ ansible_user }}@{{ item }}
+
 - name: Join extra controlplane nodes
   shell: "{{join_command}} --control-plane"
+  when: "hostvars[groups['master_nodes'][0]].inventory_hostname is not search(ansible_fqdn)"
